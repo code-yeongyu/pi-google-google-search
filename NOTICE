@@ -1,0 +1,4 @@
+pi-google-google-search
+
+This package targets the pi coding agent extension API by Mario Zechner and ports the senpi-mono builtin
+google-google-search extension into a standalone pi extension package.
