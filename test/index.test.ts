@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import googleGoogleSearchExtension, {
 	addGoogleGoogleSearchToPayload,
 	GOOGLE_GOOGLE_SEARCH_SECTION,
@@ -8,11 +8,52 @@ import googleGoogleSearchExtension, {
 
 const ENABLE_ENV = "PI_GOOGLE_GOOGLE_SEARCH";
 
+type TestUi = {
+	setStatus: (key: string, value: string | undefined) => void;
+	setWidget: (key: string, lines: string[] | undefined, options?: { placement: "belowEditor" }) => void;
+	theme: { fg: (key: string, value: string) => string };
+};
+
 afterEach(() => {
 	delete process.env[ENABLE_ENV];
 });
 
 describe("google-google-search builtin extension", () => {
+	it("shows native google search widget for Google sessions", async () => {
+		type SessionStartHandler = (
+			event: object,
+			ctx: { model?: { api?: string }; hasUI?: boolean; ui: TestUi },
+		) => Promise<void> | void;
+
+		let sessionStartHandler: SessionStartHandler | undefined;
+		const setStatus = vi.fn();
+		const setWidget = vi.fn();
+		const pi = {
+			on(eventName: string, handler: unknown) {
+				if (eventName === "session_start") {
+					sessionStartHandler = handler as SessionStartHandler;
+				}
+			},
+		} satisfies Pick<ExtensionAPI, "on">;
+
+		googleGoogleSearchExtension(pi as ExtensionAPI);
+		await sessionStartHandler?.(
+			{},
+			{
+				model: { api: "google-generative-ai" },
+				hasUI: true,
+				ui: { setStatus, setWidget, theme: { fg: (_key: string, value: string) => value } },
+			},
+		);
+
+		expect(setStatus).toHaveBeenCalledWith("pi-google-google-search", "googleSearch native");
+		expect(setWidget).toHaveBeenCalledWith(
+			"pi-google-google-search",
+			["Native Google Search", "Google · googleSearch · grounding metadata visible in assistant output"],
+			{ placement: "belowEditor" },
+		);
+	});
+
 	it("is a no-op when api is anthropic-messages", () => {
 		const payload = {
 			tools: [{ googleSearch: {} }],

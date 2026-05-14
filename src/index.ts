@@ -1,9 +1,12 @@
 import type { Api } from "@mariozechner/pi-ai";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 
 type ToolDefinition = Record<string, unknown>;
 
 const ENABLE_ENV = "PI_GOOGLE_GOOGLE_SEARCH";
+const STATUS_KEY = "pi-google-google-search";
+const WIDGET_KEY = "pi-google-google-search";
+const WIDGET_LINES = ["Native Google Search", "Google · googleSearch · grounding metadata visible in assistant output"];
 
 function parseEnableEnv(envVar: string): boolean {
 	const envValue = process.env[envVar];
@@ -77,6 +80,23 @@ export function isGoogleGoogleSearchEnabled(): boolean {
 	return parseEnableEnv(ENABLE_ENV);
 }
 
+function clearUi(ctx: ExtensionContext): void {
+	if (!ctx.hasUI) return;
+	ctx.ui.setStatus(STATUS_KEY, undefined);
+	ctx.ui.setWidget(WIDGET_KEY, undefined);
+}
+
+function syncUi(ctx: ExtensionContext): void {
+	if (!ctx.hasUI) return;
+	if (!isGoogleApi(ctx.model?.api) || !isGoogleGoogleSearchEnabled()) {
+		clearUi(ctx);
+		return;
+	}
+
+	ctx.ui.setStatus(STATUS_KEY, "googleSearch native");
+	ctx.ui.setWidget(WIDGET_KEY, WIDGET_LINES, { placement: "belowEditor" });
+}
+
 export const GOOGLE_GOOGLE_SEARCH_SECTION = `
 ## Google Search
 
@@ -89,6 +109,18 @@ or online information.
 export default function googleGoogleSearchExtension(pi: ExtensionAPI): void {
 	pi.on("before_provider_request", (event, ctx) => {
 		return addGoogleGoogleSearchToPayload(ctx.model?.api, event.payload);
+	});
+
+	pi.on("session_start", async (_event, ctx) => {
+		syncUi(ctx);
+	});
+
+	pi.on("model_select", async (_event, ctx) => {
+		syncUi(ctx);
+	});
+
+	pi.on("session_shutdown", async (_event, ctx) => {
+		clearUi(ctx);
 	});
 
 	pi.on("before_agent_start", async (event, ctx) => {
