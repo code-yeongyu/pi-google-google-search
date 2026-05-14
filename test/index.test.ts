@@ -46,7 +46,7 @@ describe("google-google-search builtin extension", () => {
 			},
 		);
 
-		expect(setStatus).toHaveBeenCalledWith("pi-google-google-search", "googleSearch native");
+		expect(setStatus).toHaveBeenCalledWith("pi-google-google-search", undefined);
 		expect(setWidget).toHaveBeenCalledWith(
 			"pi-google-google-search",
 			["Native Google Search", "Google · googleSearch · grounding metadata visible in assistant output"],
