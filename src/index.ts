@@ -6,7 +6,6 @@ type ToolDefinition = Record<string, unknown>;
 const ENABLE_ENV = "PI_GOOGLE_GOOGLE_SEARCH";
 const STATUS_KEY = "pi-google-google-search";
 const WIDGET_KEY = "pi-google-google-search";
-const WIDGET_LINES = ["Native Google Search", "Google · googleSearch · grounding metadata visible in assistant output"];
 
 function parseEnableEnv(envVar: string): boolean {
 	const envValue = process.env[envVar];
@@ -87,14 +86,7 @@ function clearUi(ctx: ExtensionContext): void {
 }
 
 function syncUi(ctx: ExtensionContext): void {
-	if (!ctx.hasUI) return;
-	if (!isGoogleApi(ctx.model?.api) || !isGoogleGoogleSearchEnabled()) {
-		clearUi(ctx);
-		return;
-	}
-
-	ctx.ui.setStatus(STATUS_KEY, undefined);
-	ctx.ui.setWidget(WIDGET_KEY, WIDGET_LINES, { placement: "belowEditor" });
+	clearUi(ctx);
 }
 
 export const GOOGLE_GOOGLE_SEARCH_SECTION = `

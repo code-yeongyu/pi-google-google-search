@@ -47,11 +47,7 @@ describe("google-google-search builtin extension", () => {
 		);
 
 		expect(setStatus).toHaveBeenCalledWith("pi-google-google-search", undefined);
-		expect(setWidget).toHaveBeenCalledWith(
-			"pi-google-google-search",
-			["Native Google Search", "Google · googleSearch · grounding metadata visible in assistant output"],
-			{ placement: "belowEditor" },
-		);
+		expect(setWidget).toHaveBeenCalledWith("pi-google-google-search", undefined);
 	});
 
 	it("is a no-op when api is anthropic-messages", () => {
