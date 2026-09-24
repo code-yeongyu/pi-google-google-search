@@ -1,6 +1,6 @@
 {
 	"name": "pi-google-google-search",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Google native search policy extension for the pi coding agent. Ensures native googleSearch tools are present on Google API payloads by default and appends Google Search guidance to the system prompt.",
 	"type": "module",
 	"license": "MIT",
