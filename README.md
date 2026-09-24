@@ -28,7 +28,7 @@ The package targets the [`pi`](https://github.com/badlogic/pi-mono/tree/main/pac
 
 ```bash
 # From npm (once published)
-pi install npm:pi-google-google-search
+pi install git:github.com/code-yeongyu/pi-google-google-search
 
 # From git
 pi install git:github.com/code-yeongyu/pi-google-google-search
