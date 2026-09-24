@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import googleGoogleSearchExtension, {
 	addGoogleGoogleSearchToPayload,
@@ -33,6 +33,7 @@ describe("google-google-search builtin extension", () => {
 				if (eventName === "session_start") {
 					sessionStartHandler = handler as SessionStartHandler;
 				}
+				return () => {}; // cleanup function
 			},
 		} satisfies Pick<ExtensionAPI, "on">;
 
@@ -278,6 +279,7 @@ describe("google-google-search before_agent_start", () => {
 				if (eventName === "before_agent_start") {
 					beforeAgentStartHandler = handler as BeforeAgentStartHandler;
 				}
+				return () => {}; // cleanup function
 			},
 		} satisfies Pick<ExtensionAPI, "on">;
 
